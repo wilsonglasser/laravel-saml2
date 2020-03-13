@@ -43,9 +43,12 @@ class Saml2ServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(Saml2Auth::class, function ($app) {
-            $idpName = $app->request->route('idpName');
-            $auth = Saml2Auth::loadOneLoginAuthFromIpdConfig($idpName);
-            return new Saml2Auth($auth);
+            $idpName = request()->route('idpName');
+            if (empty($idpName)) {
+                $idpName = 'company_'.isset($_COOKIE['saml_company_id']) ? $_COOKIE['saml_company_id'] : 0;
+            }
+            $auth = Saml2Auth::loadOneLoginAuthFromIpdConfig('company_'.$_COOKIE['saml_company_id']);
+            $class = new Saml2Auth($auth);
         });
     }
 
