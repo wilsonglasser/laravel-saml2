@@ -12,12 +12,11 @@ class Saml2Controller extends Controller
     /**
      * Generate local sp metadata.
      *
-     * @param Saml2Auth $saml2Auth
      * @return \Illuminate\Http\Response
      */
-    public function metadata(Saml2Auth $saml2Auth)
+    public function metadata()
     {
-        $metadata = $saml2Auth->getMetadata();
+        $metadata = getSaml2Auth()->getMetadata();
 
         return response($metadata, 200, ['Content-Type' => 'text/xml']);
     }
@@ -26,12 +25,12 @@ class Saml2Controller extends Controller
      * Process an incoming saml2 assertion request.
      * Fires 'Saml2LoginEvent' event if a valid user is found.
      *
-     * @param Saml2Auth $saml2Auth
      * @param $idpName
      * @return \Illuminate\Http\Response
      */
-    public function acs(Saml2Auth $saml2Auth, $idpName)
+    public function acs($idpName)
     {
+        $saml2Auth = getSaml2Auth();
         $errors = $saml2Auth->acs();
 
         if (!empty($errors)) {
@@ -61,12 +60,12 @@ class Saml2Controller extends Controller
      * Fires 'Saml2LogoutEvent' event if its valid.
      * This means the user logged out of the SSO infrastructure, you 'should' log them out locally too.
      *
-     * @param Saml2Auth $saml2Auth
      * @param $idpName
      * @return \Illuminate\Http\Response
      */
-    public function sls(Saml2Auth $saml2Auth, $idpName)
+    public function sls( $idpName)
     {
+        $saml2Auth = getSaml2Auth();
         $errors = $saml2Auth->sls($idpName, config('saml2_settings.retrieveParametersFromServer'));
         if (!empty($errors)) {
             logger()->error('Saml2 error', $errors);
@@ -80,11 +79,11 @@ class Saml2Controller extends Controller
     /**
      * Initiate a logout request across all the SSO infrastructure.
      *
-     * @param Saml2Auth $saml2Auth
      * @param Request $request
      */
-    public function logout(Saml2Auth $saml2Auth, Request $request)
+    public function logout(Request $request)
     {
+        $saml2Auth = getSaml2Auth();
         $returnTo = $request->query('returnTo');
         $sessionIndex = $request->query('sessionIndex');
         $nameId = $request->query('nameId');
@@ -95,10 +94,10 @@ class Saml2Controller extends Controller
     /**
      * Initiate a login request.
      *
-     * @param Saml2Auth $saml2Auth
      */
-    public function login(Saml2Auth $saml2Auth)
+    public function login()
     {
+        $saml2Auth = getSaml2Auth();
         $saml2Auth->login(config('saml2_settings.loginRoute'));
     }
 }
