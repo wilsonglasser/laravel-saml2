@@ -28,10 +28,14 @@ class Saml2Controller extends Controller
      * @param $idpName
      * @return \Illuminate\Http\Response
      */
-    public function acs($idpName)
+    public function acs($idpName = null)
     {
         $saml2Auth = getSaml2Auth();
         $errors = $saml2Auth->acs();
+        
+        if ($idpName === null) {
+            $idpName = 'company_'.@$_COOKIE['saml_company_id'];
+        }
 
         if (!empty($errors)) {
             logger()->error('Saml2 error_detail', ['error' => $saml2Auth->getLastErrorReason()]);
@@ -63,8 +67,11 @@ class Saml2Controller extends Controller
      * @param $idpName
      * @return \Illuminate\Http\Response
      */
-    public function sls( $idpName)
+    public function sls($idpName = null )
     {
+        if ($idpName === null) {
+            $idpName = 'company_'.@$_COOKIE['saml_company_id'];
+        }
         $saml2Auth = getSaml2Auth();
         $errors = $saml2Auth->sls($idpName, config('saml2_settings.retrieveParametersFromServer'));
         if (!empty($errors)) {
