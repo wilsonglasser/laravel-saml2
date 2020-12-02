@@ -28,7 +28,7 @@ class Saml2Auth
     /**
      * Load the IDP config file and construct a OneLogin\Saml2\Auth (aliased here as OneLogin_Saml2_Auth).
      * Pass the returned value to the Saml2Auth constructor.
-     * 
+     *
      * @param string    $idpName        The target IDP name, must correspond to config file 'config/saml2/${idpName}_idp_settings.php'
      * @return OneLogin_Saml2_Auth Contructed OneLogin Saml2 configuration of the requested IDP
      * @throws \InvalidArgumentException if $idpName is empty
@@ -47,14 +47,14 @@ class Saml2Auth
         }
 
         if (empty($config['sp']['entityId'])) {
-            $config['sp']['entityId'] = URL::route('saml2_metadata');//, $idpName);
+            $config['sp']['entityId'] = URL::route('saml2_metadata', $idpName);
         }
         if (empty($config['sp']['assertionConsumerService']['url'])) {
-            $config['sp']['assertionConsumerService']['url'] = URL::route('saml2_acs');//, $idpName);
+            $config['sp']['assertionConsumerService']['url'] = URL::route('saml2_acs', $idpName);
         }
         if (!empty($config['sp']['singleLogoutService']) &&
             empty($config['sp']['singleLogoutService']['url'])) {
-            $config['sp']['singleLogoutService']['url'] = URL::route('saml2_sls');//, $idpName);
+            $config['sp']['singleLogoutService']['url'] = URL::route('saml2_sls', $idpName);
         }
         if (strpos($config['sp']['privateKey'], 'file://')===0) {
             $config['sp']['privateKey'] = static::extractPkeyFromFile($config['sp']['privateKey']);
@@ -224,7 +224,7 @@ class Saml2Auth
         return $this->auth->getLastErrorReason();
     }
 
-    
+
     protected static function extractPkeyFromFile($path) {
         $res = openssl_get_privatekey($path);
         if (empty($res)) {
