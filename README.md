@@ -9,7 +9,7 @@ The aim of this library is to be as simple as possible. We won't mess with Larav
 You can install the package via composer:
 
 ```
-composer require aacotroneo/laravel-saml2
+composer require wilsonglasser/laravel-saml2
 ```
 Or manually add this to your composer.json:
 
