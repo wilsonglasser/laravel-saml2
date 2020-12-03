@@ -46,15 +46,21 @@ class Saml2Auth
             throw new \InvalidArgumentException('"' . $idpName . '" is not a valid IdP.');
         }
 
+        $configIdpName = $config['idpName'] ?? '-1';
+
         if (empty($config['sp']['entityId'])) {
-            $config['sp']['entityId'] = URL::route('saml2_metadata', $idpName);
+            $config['sp']['entityId'] = str_replace('/-1/','/',
+                URL::route('saml2_metadata', $configIdpName));
         }
         if (empty($config['sp']['assertionConsumerService']['url'])) {
-            $config['sp']['assertionConsumerService']['url'] = URL::route('saml2_acs', $idpName);
+            $config['sp']['assertionConsumerService']['url'] =
+                str_replace('/-1/','/',
+                    URL::route('saml2_acs', $configIdpName));
         }
         if (!empty($config['sp']['singleLogoutService']) &&
             empty($config['sp']['singleLogoutService']['url'])) {
-            $config['sp']['singleLogoutService']['url'] = URL::route('saml2_sls', $idpName);
+            $config['sp']['singleLogoutService']['url'] = str_replace('/-1/','/',
+                URL::route('saml2_sls', $configIdpName));
         }
         if (strpos($config['sp']['privateKey'], 'file://')===0) {
             $config['sp']['privateKey'] = static::extractPkeyFromFile($config['sp']['privateKey']);
