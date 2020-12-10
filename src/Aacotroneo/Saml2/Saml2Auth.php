@@ -24,6 +24,10 @@ class Saml2Auth
     {
         $this->auth = $auth;
     }
+    
+    function getAuth() {   
+        return $this->auth;
+    }
 
     /**
      * Load the IDP config file and construct a OneLogin\Saml2\Auth (aliased here as OneLogin_Saml2_Auth).
